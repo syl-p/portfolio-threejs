@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite App</title>
+</head>
+<body class="relative font-mono text-white bg-neutral-900">
+  <div class="overlay w-full h-full fixed top-0 left-0 inset-0 bg-[bottom_1px_center] bg-grid-slate-400/[0.05] bg-center border-slate-100/5"
+       style="mask-image: linear-gradient(transparent, black);"></div>
+  <div class="fixed texture-overlay"></div>
+  <nav class="flex relative z-10 justify-between space-x-3 px-12 py-8">
+    <div class="flex self-end space-x-2">
+      <div class="p-1 border border-zinc-700">
+        <i class="flex justify-center items-center w-9 h-9 bg-opacity-70 bg-neutral-700">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="block w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+          </svg>
+        </i>
+      </div>
+      <p class="self-end m-0 text-3xl leading-none uppercase">
+        _<span class="font-bold">websylvain</span><sup class="uppercase">tm</sup></p>
+    </div>
+  </nav>
+
+  <div id="app">
+    <div class="w-full h-screen fixed top-0 left-0 flex text-white">
+      <div class="m-auto h-3/6">
+        <p class="text-3xl xl:text--3xl uppercase">Développeur web</p>
+        <h1 class="text-6xl xl:text-[140px] uppercase">Websylvain</h1>
+      </div>
+    </div>
+
+    <div class="flex absolute top-0 left-0 flex-col justify-around w-full h-screen">
+      <div class="relative m-auto md:w-3/6 xl:w-4/6 h-2/4">
+        <svg fill="none" viewBox="0 0 22 187" class="h-full absolute left-0 -scale-x-[1]" astro-icon="carousel-border">
+          <path stroke="currentColor" d="m1 186 20-20v-10l-4-7V39l4-7V22L1 .5" ></path>
+        </svg>
+        <svg fill="none" viewBox="0 0 22 187" class="absolute right-0 h-full" astro-icon="carousel-border">
+          <path stroke="currentColor" d="m1 186 20-20v-10l-4-7V39l4-7V22L1 .5" ></path>
+        </svg>
+      </div>
+    </div>
+
+    <canvas class="w-full h-screen fixed top-0 left-0 "></canvas>
+  </div>
+
+  <footer class="flex justify-between w-full fixed bottom-0 left-0 px-12 py-6">
+    <ul class="flex space-x-8">
+      <li>Developpement web</li>
+      <li>Formation</li>
+      <li>Conseil</li>
+    </ul>
+
+    <div class="flex space-x-10">
+      <ul class="flex space-x-3">
+        <li>Linkedin</li>
+        <li>Twitter</li>
+      </ul>
+
+      <p class="flex space-x-3">
+            <span class="relative flex h-3 w-3 self-center">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+            </span>
+
+        <span class="leading-1">Carcassonne 11000, FRANCE</span>
+      </p>
+    </div>
+  </footer>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
