@@ -14,7 +14,8 @@ export default class World {
   debug: Debug
 
   // My World objects
-  fox?: GLTF
+  human?: GLTF
+  ruby?: GLTF
   animation: {
     animationMixer: THREE.AnimationMixer | null, 
     actions: any,
@@ -26,7 +27,7 @@ export default class World {
       throw new Error('Function not implemented.');
     }
   }
-  FoxDebug!: GUI;
+  humanDebug!: GUI;
   
   constructor(experience: Experience) {
     this.experience = experience
@@ -36,65 +37,62 @@ export default class World {
 
     // Prepare Debug
     if(this.debug.active) {
-      this.FoxDebug = this.debug.ui.addFolder('fox')
+      this.humanDebug = this.debug.ui.addFolder('human')
     }
 
     // Setup element
     this.resources.on('ready', () => {
       // this.setFloor()
-      this.setFox()
+      this.setHuman()
 
       // Start environment
       this.environment = new Environment(this.experience)
     })
   }
 
-  setFloor() {
-    const textures: {color: THREE.Texture, normal: THREE.Texture} = {
-      color: this.resources.items.grassColorTexture,
-      normal: this.resources.items.grassNormalTexture
-    }
-
-    textures.color.encoding = THREE.sRGBEncoding
-    textures.color.repeat.set(1.5, 1.5)
-    textures.color.wrapS = THREE.RepeatWrapping
-    textures.color.wrapT = THREE.RepeatWrapping
-
-    textures.normal.repeat.set(1.5, 1.5)
-    textures.normal.wrapS = THREE.RepeatWrapping
-    textures.normal.wrapT = THREE.RepeatWrapping
-
-    const floorMesh = new THREE.Mesh(
-      new THREE.CircleGeometry(5, 64),
-      new THREE.MeshStandardMaterial({
-        map: this.resources.items.grassColorTexture,
-        normalMap: this.resources.items.grassNormalTexture
-      })
-    )
-    
-    floorMesh.receiveShadow = true
-    floorMesh.rotateX(- Math.PI * 0.5)
-    this.scene.add(floorMesh)
-  }
-
-  setFox() {
+  setHuman() {
     // Set Model 
-    this.fox = this.resources.items.websylvain
+    this.human = this.resources.items.websylvain
 
-    if (this.fox) {
-      // this.fox.scene.scale.set(0.02, 0.02, 0.02)
-      this.fox.scene.position.set(0, -1.55, 0)
-      // this.fox.scene.position.set(0, 0, 0)
-      this.scene.add(this.fox.scene)
+    if (this.human) {
+      // this.human.scene.scale.set(0.02, 0.02, 0.02)
+      this.human.scene.position.set(0, -1.55, 0)
+      this.scene.add(this.human.scene)
   
-      this.fox.scene.traverse((child) => {
+      this.human.scene.traverse((child) => {
         if(child instanceof THREE.Mesh) {
           child.castShadow = true
         }
       })
 
-      // Debug Animation
+      this.setRuby()
+
+      // Debug
       if(this.debug.active) {
+
+      }
+    }
+  }
+
+  setRuby() {
+    this.ruby = this.resources.items.ruby
+    const material = new THREE.MeshStandardMaterial({ color: 'red' })
+
+    if (this.ruby) {
+      this.ruby.scene.scale.set(0.08, 0.08, 0.08)
+      this.ruby.scene.position.set(-0.05, 0.05, 0.4)
+      this.scene.add(this.ruby.scene)
+  
+      this.ruby.scene.traverse((child) => {
+        if(child instanceof THREE.Mesh) {
+          child.castShadow = true
+          child.material = material
+        }
+      })
+
+      // Debug
+      if(this.debug.active) {
+
       }
     }
   }
@@ -102,6 +100,9 @@ export default class World {
   update() {
     if (this.animation.animationMixer)
       this.animation.animationMixer.update(this.experience.time.delta * 0.001)
+
+    if (this.ruby)
+      this.ruby.scene.rotateOnAxis(new THREE.Vector3(0, 1, 0), this.experience.time.delta * 0.001)
   }
 }
 

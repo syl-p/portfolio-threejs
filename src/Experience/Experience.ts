@@ -7,6 +7,7 @@ import Resources from './World/Resources';
 import World from './World/World';
 import sources from './sources'
 import Debug from './Utils/Debug';
+import EventEmitter from './Utils/EventEmitter';
 
 export default class Experience {
   canvas: HTMLElement
@@ -18,6 +19,7 @@ export default class Experience {
   world: World
   resources: Resources
   debug: Debug;
+  sectionEmitter = new EventEmitter()
 
   constructor(canvas: HTMLElement) {
     // @ts-ignore
@@ -40,6 +42,10 @@ export default class Experience {
     this.time.on('tick', () => {
       this.update()
     })
+
+    if(this.debug.active) {
+      this.scene.add( new THREE.AxesHelper( 5 ) );
+    }
   }
 
   resize() {

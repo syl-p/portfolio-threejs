@@ -19,6 +19,20 @@ export default class Camera {
     this.canvas = this.experience.canvas
     this.setInstance()
     this.setOrbitControls()
+
+    this.experience.sectionEmitter.on('entered', (id) => {
+      console.log(id)
+      switch (id) {
+        case 'intro':
+          this.instance.position.set(-0.45, 0.1, 0.65)
+          break;
+        case 'services':
+          this.instance.position.set(-0.45, 2, 0.65)
+          break;
+        default:
+          break;
+      }
+    })
   }
 
   setInstance() {
@@ -26,13 +40,14 @@ export default class Camera {
       75, this.sizes.width / this.sizes.height, 0.1, 100
     )
 
-    this.instance.position.set(-0.45, 0, 0.65)
+    this.instance.position.set(-0.45, 0.1, 0.65)
     this.scene.add(this.instance)
   }
 
   setOrbitControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
     this.controls.enableDamping = true
+    this.controls.enabled = false
   }
 
   resize() {

@@ -9,7 +9,6 @@
 .texture-overlay {
   position: absolute;
   inset: 0px;
-  z-index: 9999;
   pointer-events: none;
   background-size: 3px 3px;
   mix-blend-mode: multiply;
