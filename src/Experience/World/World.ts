@@ -55,8 +55,6 @@ export default class World {
     this.human = this.resources.items.websylvain
 
     if (this.human) {
-      // this.human.scene.scale.set(0.02, 0.02, 0.02)
-      this.human.scene.position.set(0, -1.55, 0)
       this.scene.add(this.human.scene)
   
       this.human.scene.traverse((child) => {
@@ -64,8 +62,17 @@ export default class World {
           child.castShadow = true
         }
       })
+      
+      // Récupérer la scène glTF
+      const bbox = new THREE.Box3().setFromObject(this.human.scene);
+      const height = bbox.max.y - bbox.min.y;
+      this.human.scene.position.y -= height * 0.9
 
-      this.setRuby()
+      this.setRuby(new THREE.Vector3(
+        this.human.scene.position.x,
+        this.human.scene.position.y + height * 0.9,
+        this.human.scene.position.z + 0.5
+      ))
 
       // Debug
       if(this.debug.active) {
@@ -74,13 +81,18 @@ export default class World {
     }
   }
 
-  setRuby() {
+  setRuby(humanPosition: THREE.Vector3) {
     this.ruby = this.resources.items.ruby
     const material = new THREE.MeshStandardMaterial({ color: 'red' })
 
     if (this.ruby) {
       this.ruby.scene.scale.set(0.08, 0.08, 0.08)
-      this.ruby.scene.position.set(-0.05, 0.05, 0.4)
+      this.ruby.scene.position.set(
+        humanPosition.x, 
+        humanPosition.y,
+        humanPosition.z
+      )
+
       this.scene.add(this.ruby.scene)
   
       this.ruby.scene.traverse((child) => {

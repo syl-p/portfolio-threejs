@@ -1,3 +1,4 @@
+import gsap from 'gsap';
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import Experience from "./Experience";
@@ -18,16 +19,25 @@ export default class Camera {
     this.scene = this.experience.scene
     this.canvas = this.experience.canvas
     this.setInstance()
-    this.setOrbitControls()
+
+    this.experience.resources.on('loaded', () => {
+      this.instance.position.set(0, 0, 1)
+      this.instance.lookAt(0, 0, 0)
+    })
 
     this.experience.sectionEmitter.on('entered', (id) => {
-      console.log(id)
       switch (id) {
         case 'intro':
-          this.instance.position.set(-0.45, 0.1, 0.65)
+          this.moveTo(new THREE.Vector3(0, 0, 0))
+          this.instance.lookAt(new THREE.Vector3(0, 0, 0))
           break;
         case 'services':
-          this.instance.position.set(-0.45, 2, 0.65)
+          if (this.experience.world.ruby) {
+            const target = this.experience.world.ruby?.scene.position.clone()
+            target.x += 0.5
+            this.moveTo(target)
+            this.instance.lookAt(this.experience.world.ruby?.scene.position)
+          }
           break;
         default:
           break;
@@ -39,15 +49,13 @@ export default class Camera {
     this.instance = new THREE.PerspectiveCamera(
       75, this.sizes.width / this.sizes.height, 0.1, 100
     )
-
-    this.instance.position.set(-0.45, 0.1, 0.65)
     this.scene.add(this.instance)
   }
 
   setOrbitControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
     this.controls.enableDamping = true
-    this.controls.enabled = false
+    this.controls.enabled = true
   }
 
   resize() {
@@ -55,7 +63,25 @@ export default class Camera {
     this.instance.updateProjectionMatrix()
   }
 
+  moveTo(position: THREE.Vector3) {
+    gsap.to(this.instance.position, { 
+      delay:0,
+      duration: 0.5,
+      x: position.x,
+      y: position.y,
+      z: position.z + 1,
+      onUpdate: () => {
+        this.instance.updateProjectionMatrix();
+        // console.log("play");
+      },
+      onComplete: () =>{
+        // console.log("complete");
+      },
+      ease: "none"
+    });
+  }
+
   update() {
-    this.controls.update()
+    // this.controls.update()
   }
 }

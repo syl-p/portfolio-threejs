@@ -7,10 +7,22 @@ export default class Resources extends EventEmitter {
   items: any = {}
   toLoad!: number
   loaded: number = 0
+  loaderManager = new THREE.LoadingManager(
+    () => {
+      this.emit('loaded')
+    }, 
+    (itemUrl, itemsLoaded, itemsTotal) => {
+      this.emit('progress', {
+        itemsLoaded, 
+        itemsTotal,
+        itemUrl
+      })
+    }
+  )
   loaders = {
-    gltfLoader: new GLTFLoader(),
-    textureLoader: new THREE.TextureLoader(),
-    cubeTextureLoader: new THREE.CubeTextureLoader()
+    gltfLoader: new GLTFLoader(this.loaderManager),
+    textureLoader: new THREE.TextureLoader(this.loaderManager),
+    cubeTextureLoader: new THREE.CubeTextureLoader(this.loaderManager)
   }
 
   constructor(sources: {name: string, type: string, path: string[]|string}[]) {
