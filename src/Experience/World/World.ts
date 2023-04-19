@@ -71,7 +71,7 @@ export default class World {
       this.setRuby(new THREE.Vector3(
         this.human.scene.position.x,
         this.human.scene.position.y + height * 0.9,
-        this.human.scene.position.z + 0.5
+        this.human.scene.position.z + 0.4
       ))
 
       // Debug

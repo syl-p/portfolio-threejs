@@ -21,22 +21,21 @@ export default class Camera {
     this.setInstance()
 
     this.experience.resources.on('loaded', () => {
-      this.instance.position.set(0, 0, 1)
-      this.instance.lookAt(0, 0, 0)
+      const target = new THREE.Vector3()
+      this.moveTo(target, new THREE.Vector3(-0.36, -0.15, 0.8))
     })
 
     this.experience.sectionEmitter.on('entered', (id) => {
       switch (id) {
         case 'intro':
-          this.moveTo(new THREE.Vector3(0, 0, 0))
-          this.instance.lookAt(new THREE.Vector3(0, 0, 0))
+          const target = new THREE.Vector3()
+          this.moveTo(target, new THREE.Vector3(-0.36, -0.15, 0.8))
           break;
         case 'services':
           if (this.experience.world.ruby) {
             const target = this.experience.world.ruby?.scene.position.clone()
-            target.x += 0.5
-            this.moveTo(target)
-            this.instance.lookAt(this.experience.world.ruby?.scene.position)
+            target.x -= 0.3
+            this.moveTo(target, new THREE.Vector3(+0.8, 0, 0.2))
           }
           break;
         default:
@@ -49,6 +48,7 @@ export default class Camera {
     this.instance = new THREE.PerspectiveCamera(
       75, this.sizes.width / this.sizes.height, 0.1, 100
     )
+    this.instance.position.set(-0.3, -0.2, 0.8)
     this.scene.add(this.instance)
   }
 
@@ -63,22 +63,19 @@ export default class Camera {
     this.instance.updateProjectionMatrix()
   }
 
-  moveTo(position: THREE.Vector3) {
-    gsap.to(this.instance.position, { 
-      delay:0,
-      duration: 0.5,
-      x: position.x,
-      y: position.y,
-      z: position.z + 1,
+  moveTo(target: THREE.Vector3, offset = new THREE.Vector3()) {
+    gsap.to(this.instance.position, {
+      duration: 2, // Durée de l'animation en secondes
+      x: target.x + offset.x,
+      y: target.y + offset.y,
+      z: target.z + offset.z,
       onUpdate: () => {
-        this.instance.updateProjectionMatrix();
-        // console.log("play");
+        this.instance.lookAt(target);
       },
-      onComplete: () =>{
-        // console.log("complete");
-      },
-      ease: "none"
-    });
+      onComplete: ()  => {
+        // Animation terminée
+      }
+    });        
   }
 
   update() {
