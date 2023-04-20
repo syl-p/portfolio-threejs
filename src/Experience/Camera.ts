@@ -19,13 +19,16 @@ export default class Camera {
     this.scene = this.experience.scene
     this.canvas = this.experience.canvas
     this.setInstance()
+    this.setOrbitControls()
 
-    this.experience.resources.on('loaded', () => {
-      const target = new THREE.Vector3()
-      this.moveTo(target, new THREE.Vector3(-0.36, -0.15, 0.8))
-    })
+
+    // this.experience.resources.on('loaded', () => {
+    //   const target = new THREE.Vector3()
+    //   this.moveTo(target, new THREE.Vector3(-0.36, -0.15, 0.8))
+    // })
 
     this.experience.sectionEmitter.on('entered', (id) => {
+      console.log("hello")
       switch (id) {
         case 'intro':
           const target = new THREE.Vector3()
@@ -34,8 +37,8 @@ export default class Camera {
         case 'services':
           if (this.experience.world.ruby) {
             const target = this.experience.world.ruby?.scene.position.clone()
-            target.x -= 0.3
-            this.moveTo(target, new THREE.Vector3(+0.8, 0, 0.2))
+            target.z += 0.4
+            this.moveTo(target, new THREE.Vector3(+0.45, -0.18, 0.2))
           }
           break;
         default:
@@ -69,16 +72,19 @@ export default class Camera {
       x: target.x + offset.x,
       y: target.y + offset.y,
       z: target.z + offset.z,
-      onUpdate: () => {
-        this.instance.lookAt(target);
-      },
-      onComplete: ()  => {
-        // Animation terminée
-      }
-    });        
+      ease: "linear"
+    });
+
+    gsap.to(this.controls.target, {
+      duration: 2, // Durée de l'animation en secondes
+      x: target.x,
+      y: target.y,
+      z: target.z,
+      ease: "power2.in"
+    });           
   }
 
   update() {
-    // this.controls.update()
+    this.controls.update()
   }
 }
