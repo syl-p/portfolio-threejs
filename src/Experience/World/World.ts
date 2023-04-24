@@ -5,6 +5,7 @@ import Experience from "../Experience";
 import Debug from '../Utils/Debug';
 import Environment from './Environment';
 import Resources from './Resources';
+import { ReflectorForSSRPass } from 'three/addons/objects/ReflectorForSSRPass.js';
 
 export default class World {
   experience: Experience
@@ -12,9 +13,9 @@ export default class World {
   environment!: Environment
   resources: Resources
   debug: Debug
-
+  groundReflector: ReflectorForSSRPass
   // My World objects
-  human?: GLTF
+  reflectedObjects: any[] = []
   ruby?: GLTF
   animation: {
     animationMixer: THREE.AnimationMixer | null, 
@@ -42,56 +43,21 @@ export default class World {
 
     // Setup element
     this.resources.on('ready', () => {
-      // this.setFloor()
-      this.setHuman()
+      this.setFloor()
+      this.setRuby()
 
       // Start environment
       this.environment = new Environment(this.experience)
     })
   }
 
-  setHuman() {
-    // Set Model 
-    this.human = this.resources.items.websylvain
-
-    if (this.human) {
-      this.scene.add(this.human.scene)
-  
-      this.human.scene.traverse((child) => {
-        if(child instanceof THREE.Mesh) {
-          child.castShadow = true
-        }
-      })
-      
-      // Récupérer la scène glTF
-      const bbox = new THREE.Box3().setFromObject(this.human.scene);
-      const height = bbox.max.y - bbox.min.y;
-      this.human.scene.position.y -= height * 0.9
-
-      this.setRuby(new THREE.Vector3(
-        this.human.scene.position.x,
-        this.human.scene.position.y + height * 0.9,
-        this.human.scene.position.z + 0.4
-      ))
-
-      // Debug
-      if(this.debug.active) {
-
-      }
-    }
-  }
-
-  setRuby(humanPosition: THREE.Vector3) {
+  setRuby() {
     this.ruby = this.resources.items.ruby
     const material = new THREE.MeshStandardMaterial({ color: 'red' })
 
     if (this.ruby) {
-      this.ruby.scene.scale.set(0.08, 0.08, 0.08)
-      this.ruby.scene.position.set(
-        humanPosition.x, 
-        humanPosition.y,
-        humanPosition.z
-      )
+      this.ruby.scene.scale.set(0.05, 0.05, 0.05)
+      this.ruby.scene.position.set(0, 0.05, 0)
 
       this.scene.add(this.ruby.scene)
   
@@ -99,6 +65,7 @@ export default class World {
         if(child instanceof THREE.Mesh) {
           child.castShadow = true
           child.material = material
+          this.reflectedObjects.push(child)
         }
       })
 
@@ -109,9 +76,42 @@ export default class World {
     }
   }
 
+  setFloor() {
+    // Ground
+    const plane = new THREE.Mesh(
+      new THREE.PlaneGeometry( 8, 8 ),
+      new THREE.MeshPhongMaterial( { color: 0x999999, specular: 0x101010 } )
+    );
+
+    plane.rotation.x = - Math.PI / 2;
+    plane.position.y = - 0.0001;
+    // plane.receiveShadow = true;
+    this.scene.add( plane );
+
+
+    const geometry = new THREE.PlaneGeometry( 1, 1 );
+    this.groundReflector = new ReflectorForSSRPass( geometry, {
+      clipBias: 0.0003,
+      textureWidth: this.experience.sizes.width,
+      textureHeight: this.experience.sizes.height,
+      color: 0x888888,
+      useDepthTexture: true,
+    } );
+
+    this.groundReflector.material.depthWrite = false;
+    this.groundReflector.rotation.x = - Math.PI / 2;
+    this.groundReflector.visible = true;
+    this.scene.add( this.groundReflector );
+  }
+  
+  resize() {
+    this.groundReflector.getRenderTarget().setSize(this.experience.sizes.width, this.experience.sizes.height);
+    this.groundReflector.resolution.set(this.experience.sizes.width, this.experience.sizes.height);
+  }
+
   update() {
-    if (this.animation.animationMixer)
-      this.animation.animationMixer.update(this.experience.time.delta * 0.001)
+    // if (this.animation.animationMixer)
+    //   this.animation.animationMixer.update(this.experience.time.delta * 0.001)
 
     if (this.ruby)
       this.ruby.scene.rotateOnAxis(new THREE.Vector3(0, 1, 0), this.experience.time.delta * 0.001)

@@ -33,10 +33,13 @@ export default class Experience {
     this.time = new Time()
 
     this.scene = new THREE.Scene()
+    this.scene.background = new THREE.Color( 0x443333 );
+		this.scene.fog = new THREE.Fog( 0x443333, 1, 4 );
+    
     this.resources = new Resources(sources)
     this.camera = new Camera(this)
-    this.renderer = new Renderer(this)
     this.world = new World(this)
+    this.renderer = new Renderer(this)
 
     this.sizes.on('resize', () => {
       this.resize()
@@ -82,6 +85,7 @@ export default class Experience {
   resize() {
     this.camera.resize()
     this.renderer.resize()
+    this.world.resize()
   }
 
   update() {

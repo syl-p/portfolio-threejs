@@ -22,24 +22,18 @@ export default class Camera {
     this.setOrbitControls()
 
 
-    // this.experience.resources.on('loaded', () => {
-    //   const target = new THREE.Vector3()
-    //   this.moveTo(target, new THREE.Vector3(-0.36, -0.15, 0.8))
-    // })
+    this.experience.resources.on('loaded', () => {
+      if (this.experience.world.ruby) {
+        const target = this.experience.world.ruby?.scene.position.clone()
+        this.moveTo(target, new THREE.Vector3(0.1, 0.1, 0.1))
+      }
+    })
 
     this.experience.sectionEmitter.on('entered', (id) => {
-      console.log("hello")
       switch (id) {
         case 'intro':
-          const target = new THREE.Vector3()
-          this.moveTo(target, new THREE.Vector3(-0.36, -0.15, 0.8))
           break;
         case 'services':
-          if (this.experience.world.ruby) {
-            const target = this.experience.world.ruby?.scene.position.clone()
-            target.z += 0.4
-            this.moveTo(target, new THREE.Vector3(+0.45, -0.18, 0.2))
-          }
           break;
         default:
           break;
@@ -80,7 +74,7 @@ export default class Camera {
       x: target.x,
       y: target.y,
       z: target.z,
-      ease: "power2.in"
+      ease: "linear"
     });           
   }
 

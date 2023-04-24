@@ -10,9 +10,9 @@ if (canvas) {
   // Observe page sections view
   const sections = document.querySelectorAll('section')
   const callback = (entries, observer) => {
-    console.log(entries, observer)
+    // console.log(entries, observer)
     for (const entrie of entries) {
-      console.log(entrie.target.getAttribute('id'), entrie.isIntersecting)
+      // console.log(entrie.target.getAttribute('id'), entrie.isIntersecting)
       if (entrie.isIntersecting) {
         experience.sectionEmitter.emit('entered', entrie.target.getAttribute('id'))
       }

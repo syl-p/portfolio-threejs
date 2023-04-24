@@ -43,7 +43,7 @@ export default class Environment {
     this.spotLight = new THREE.SpotLight();
     this.spotLight.angle = Math.PI / 16;
     this.spotLight.penumbra = 0.5;
-    // this.spotLight.castShadow = true;
+    this.spotLight.castShadow = true;
     this.spotLight.position.set( - 1, 1, 1 );
     this.scene.add(this.spotLight)
 
